@@ -14,8 +14,8 @@ Seven interactive tools for analyzing influences in continuous field reconstruct
 1. Clone the project and cd into the folder.
 
 ```bash
-git clone https://github.com/GitHubMahim/continuous_field_reconstruction_influences.git
-cd continuous_field_reconstruction_influences
+git clone https://github.com/celiafish/xai-if.git
+cd xai-if
 ```
 
 2. Install the required libraries to your environment.
