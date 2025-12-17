@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import SpanSelector, Button
-from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
 import os
 
@@ -36,29 +36,30 @@ def zscore_time_series(series_2d: np.ndarray) -> np.ndarray:
     return (series_2d - mu) / sigma
 
 
-def cluster_with_pca_kmeans(series_2d: np.ndarray,
-                            n_components: int = 5,
-                            n_clusters: int = 20,
-                            random_state: int = 0):
-    """Cluster time series using PCA (on z-scored data) + k-means.
+def cluster_with_tsne_kmeans(series_2d: np.ndarray,
+                              n_components: int = 2,
+                              n_clusters: int = 20,
+                              random_state: int = 0,
+                              perplexity: int = 30):
+    """Cluster time series using t-SNE (on z-scored data) + k-means.
 
     Returns:
       labels: (N,) cluster label per training point
-      pca: fitted PCA instance
+      tsne: fitted TSNE instance
       km: fitted KMeans instance
-      X_pca: (N, n_components) embedding used by k-means
+      X_tsne: (N, n_components) embedding used by k-means
     """
     # z-score per series (cluster by shape, not magnitude)
     Z = zscore_time_series(series_2d)
-    # Reshape to (N, T) for PCA/sklearn
+    # Reshape to (N, T) for t-SNE/sklearn
     Z_NT = Z.T  # (N, T)
 
-    pca = PCA(n_components=n_components, random_state=random_state)
-    X_pca = pca.fit_transform(Z_NT)  # (N, C)
+    tsne = TSNE(n_components=n_components, random_state=random_state, perplexity=perplexity)
+    X_tsne = tsne.fit_transform(Z_NT)  # (N, n_components)
 
     km = KMeans(n_clusters=n_clusters, n_init=10, random_state=random_state)
-    labels = km.fit_predict(X_pca)
-    return labels, pca, km, X_pca
+    labels = km.fit_predict(X_tsne)
+    return labels, tsne, km, X_tsne
 
 
 def compute_cluster_means(raw_series_2d: np.ndarray, labels: np.ndarray):
@@ -183,18 +184,20 @@ def plot_time_clusters(influences_over_time: np.ndarray,
 def main():
     # Config
     input_path = os.path.join(TOOL_DATA_DIR, 'index_15533_influences.npy')   # (T, N_train)
-    n_components = 5
-    n_clusters = 20
+    n_components = 2
+    n_clusters = 5
     sample_per_cluster = 0  # set to >0 to draw thin sample lines
+    perplexity = 30  # t-SNE perplexity parameter
 
     print(f"Loading influences from '{input_path}'...")
     influ_tn = load_influences(input_path)  # (T, N)
     T, N = influ_tn.shape
     print(f"Loaded influences shape: {influ_tn.shape} (T={T}, N_train={N})")
 
-    print("Clustering with PCA + KMeans...")
-    labels, pca, km, X_pca = cluster_with_pca_kmeans(
-        influ_tn, n_components=n_components, n_clusters=n_clusters, random_state=0
+    print("Clustering with t-SNE + KMeans...")
+    labels, tsne, km, X_tsne = cluster_with_tsne_kmeans(
+        influ_tn, n_components=n_components, n_clusters=n_clusters, 
+        random_state=0, perplexity=perplexity
     )
     means, sizes = compute_cluster_means(influ_tn, labels)
 
@@ -205,7 +208,7 @@ def main():
         means=means,
         sizes=sizes,
         sample_per_cluster=sample_per_cluster,
-        title=f"Influence over Time - PCA({n_components}) + KMeans(k={n_clusters})"
+        title=f"Influence over Time - t-SNE({n_components}D) + KMeans(k={n_clusters})"
     )
 
 
