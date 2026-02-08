@@ -179,4 +179,33 @@ python plot-scripts/plot_region_histogram.py
 3. Run any tool: `python plot-scripts/plot_[tool_name].py`
 4. Use interactive controls to explore influences
 
+---
+
+## Computing Influences Yourself
+
+To compute influences from scratch using the MMGN model, download the complete folder with all necessary files and models:
+
+| Resource | Link |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| MMGN Model & Influence Computation Files | [[Google Drive]](https://drive.google.com/drive/folders/YOUR_FOLDER_ID) |
+
+**Setup Instructions:**
+
+1. **Build the MMGN environment:**
+   ```bash
+   conda env create -f mmgn_env.yml
+   conda activate mmgn
+   ```
+
+2. **Run the influence computation:**
+   ```bash
+   python test_influence.py
+   ```
+
+**Important Notes:**
+- The `test_influence.py` file is the main entry point for computing influences. It calls other methods and models from the other files in the folder.
+- The `mmgn_env.yml` file contains the conda environment configuration needed to ensure all dependencies are properly installed.
+- Make sure to activate the MMGN environment before running `test_influence.py`.
+
+
 ***For any questions or issues, please contact mohtadimahim@gmail.com***
