@@ -187,7 +187,7 @@ To compute influences from scratch using the MMGN model, download the complete f
 
 | Resource | Link |
 | -------------------------------------------- | ------------------------------------------------------------ |
-| MMGN Model & Influence Computation Files | [[Google Drive]](https://drive.google.com/drive/folders/YOUR_FOLDER_ID) |
+| MMGN Model & Influence Computation Files | [[Google Drive]](https://drive.google.com/file/d/1q_CcZQ6GokolvIDcNKZGHPGB1EV1hhCJ/view?usp=sharing) |
 
 **Setup Instructions:**
 
